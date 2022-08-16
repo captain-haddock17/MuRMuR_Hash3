@@ -1,0 +1,47 @@
+name = "murmur3"
+version = "3.0.0-dev"
+
+description = "Hash functions based on Austin Appleby's MuRMuR v3 algorithm."
+long-description = "Non-cryptographic 32-bit or 128-bit hash functions based on Austin Appleby [2008] multiply (MU) and rotate (R) v3 algorithm."
+tags = ["spark", "security"]
+
+authors = ["William J. Franck"]
+maintainers = ["William J. Franck <william@sterna.io>"]
+maintainers-logins = ["captain-haddock17"]
+
+licenses = "MIT"
+
+website = "https://myproject.example.org/"
+
+[gpr-externals]
+BUILD_MODE = ["debug", "profile", "release"]
+
+[build-profiles]
+
+[build-switches]
+# Validation.Optimization = Performance
+# Release.Optimization = Performance
+# Development.Optimization = Debug
+
+# Development.Debug_Info =yes
+# Validation.Debug_Info = no
+# Release.Debug_Info = no
+
+# Development.Runtime_Checks =Everything
+# Validation.Runtime_Checks = Everything
+# Release.Runtime_Checks = Default
+
+# Development.Style_Checks =no
+# Validation.Style_Checks = yes
+# Release.Style_Checks = yes
+
+"*".Ada_Version = "Ada2022"
+
+
+
+
+# Optimization
+# project-files = ["test/testsuite.gpr"]
+
+[[depends-on]]
+aunit = "^22.0.0"
