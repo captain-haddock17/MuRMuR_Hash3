@@ -1,48 +1,54 @@
 -------------------------------------------------------------------------------
--- AdaForge.Crypto.MuRMuR_Hash3  was written by Austin Appleby, and is placed in the public
--- domain. The author hereby disclaims copyright to this source code.
-
--- Note - The x86 and x64 versions do _not_ produce the same results, as the
--- algorithms are optimized for their respective platforms. You can still
--- compile and run any of them on any platform, but your performance with the
--- non-native version will be less than optimal.
+--  MuRMuR_Hash (v3) was written by Austin Appleby,
+--  and is placed in the public domain.
+--  The author disclaims copyright in his C source code.
+-------------------------------------------------------------------------------
+--  William J. Franck has ported the C code to Ada with adaptations.
+--  https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp
 --
--- https://github.com/aappleby/smhasher/blob/master/src/AdaForge.Crypto.MuRMuR_Hash3 .cpp
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
 -------------------------------------------------------------------------------
--- https://github.com/daisuke-t-jp/MurmurHash-Swift
--- https://github.com/daisuke-t-jp/MurmurHash-Swift/blob/master/Sources/MurmurHash/AdaForge.Crypto.MuRMuR_Hash3 _x86_32.swift
--- https://github.com/daisuke-t-jp/MurmurHash-Swift/blob/master/Sources/MurmurHash/AdaForge.Crypto.MuRMuR_Hash3 Tail.swift
--------------------------------------------------------------------------------
+
 with Ada.Unchecked_Conversion;
 
 with Ada.Strings.Fixed;
 use  Ada.Strings.Fixed;
-
 package body AdaForge.Crypto.MuRMuR_Hash3  is
 
+   use Interfaces;
+
+   -- --------------------------------------------------- --
+   -- Elementary binary Data definitions and compositions --
+   -- --------------------------------------------------- --
    type Unsigned_8_32 is array (1 .. 4) of Unsigned_8;
    type Unsigned_8_64 is array (1 .. 8) of Unsigned_8;
    type Unsigned_32_128 is array (1 .. 4) of Unsigned_32;
    type Unsigned_64_128 is array (1 .. 2) of Unsigned_64;
 
    subtype String_Hex32 is String(1 .. 32/ 4 + 4);
-   Null_String_Hex32 : constant String (1 .. 32/4) := [others => '0'];
+   Null_String_Hex32 : constant String (1 .. 32/4) := (others => '0');
 
    subtype String_Hex128 is String(1 .. 128 / 4 + 4);
-   Null_String_Hex128 : constant String (1 .. 128 / 4) := [others => '0'];
+   Null_String_Hex128 : constant String (1 .. 128 / 4) := (others => '0');
 
+   -- ----------------------------------------------- --
+   -- Data and 32- 128-bits Block definitions of data --
+   -- ----------------------------------------------- --
    type Data_8b is array (Natural range 1 .. Object'Size / Unsigned_8'Size)
       of Unsigned_8;
    type Block_32 is array (Natural range 1 .. Object'Size / Unsigned_32'Size)
       of Unsigned_32;
-   type Block_64 is array (Natural range 1 .. Object'Size / Unsigned_64'Size)
-      of Unsigned_64;
 
    type Block_32_128 is array (Natural range 1 .. Object'Size / Unsigned_32_128'Size)
       of Unsigned_32_128;
    type Block_64_128 is array (Natural range 1 .. Object'Size / Unsigned_64_128'Size)
       of Unsigned_64_128;
 
+   -- ---------------------- --
+   -- Binary mapping of data --
+   -- ---------------------- --
    function Map_to_Array is new Ada.Unchecked_Conversion (
                Source => Object,
                Target => Data_8b);
@@ -74,12 +80,10 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
    function Map_to_64 is new Ada.Unchecked_Conversion (
                Source => Unsigned_8_64,
                Target => Unsigned_64);
-   -------------------------------------------------------------------------------
-   -- Read a word (32 or 128 bits) in the Data-Block
-   -- if your platform needs to do endian-swapping
-   -- or can only handle aligned reads,
-   -- do the conversion here
-   -------------------------------------------------------------------------------
+
+   -- --------------- --
+   -- Adapt_Indianess --
+   -- --------------- --
    function Adapt_Indianess_32 (Block : Unsigned_32) return Unsigned_32
    with inline is
       Block_4 : Unsigned_8_32 := Map_to_4bytes (Block);
@@ -114,11 +118,12 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
       end case;
    end Adapt_Indianess_64;
 
-   -------------------------------------------------------------------------------
-   -- Finalization mix - force all bits of a hash block to avalanche
-   -------------------------------------------------------------------------------
+   ----------------------
+   -- Finalization mix -
+   ----------------------
    function fmix32 ( hash_block : Unsigned_32) return Unsigned_32
    with inline is
+      -- force all bits of a hash block to avalanche
       h : Unsigned_32 := hash_block;
    begin
       h := h xor Shift_Right (h, 16);
@@ -144,19 +149,24 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
    -------------------------------------------------------------------------------
    -- 32 bits hash --
    -------------------------------------------------------------------------------
+   -- Hash_32() return Unsigned_32 --
+   -- ---------------------------- --
    function Hash_32 (
                Key : Object;
                Length : Natural := Object'Size / 8;
                Seed : Unsigned_32 := 0)
                return Unsigned_32 is separate;
 
+   -- --------------------------- --
+   -- Hash_32() return Hex String --
+   -- --------------------------- --
    function Hash_32 (
                Key : Object;
                Length : Natural := Object'Size / 8;
                Seed : Unsigned_32 := 0)
                return String is
       Hash_computed : Unsigned_32 :=0;
-      Hash_computed_HexString : String_Hex32 := [others => '0'];
+      Hash_computed_HexString : String_Hex32 := (others => '0');
    begin
       Hash_computed := Hash_32 (Key, Length, Seed);
       Hex32_IO.Put (To   => Hash_computed_HexString,
@@ -167,28 +177,35 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
                        New_Item => Hash_computed_HexString (4..String_Hex32'Last-1));
    end Hash_32;
 
+   -- Progressive Hash_32
+   -- ------------------- --
    function Hash_32_Progressive (
                Key : Object;
                Length : Natural := Object'Size / 8;
                Seed : Unsigned_32 := 0)
                return Unsigned_32 is separate;
 
-   -- ------------------- --
-   -- Hash_128_32 --
-   -- ------------------- --
+   -------------------------------------------------------------------------------
+   -- 128 bits hash --
+   -------------------------------------------------------------------------------
+   -- Hash_128 with 32-bits words returns Unsigned_128 --
+   -- ------------------------------------------------ --
    function Hash_128_32 (
                Key : Object;
                Length : Natural := Object'Size / 8;
                Seed : Unsigned_32 := 0)
                return Unsigned_128 is separate;
 
+   -- ------------------------------- --
+   -- Hash_128_32() return Hex String --
+   -- ------------------------------- --
    function Hash_128_32 (
                Key : Object;
                Length : Natural := Object'Size / 8;
                Seed : Unsigned_32 := 0)
                return String is
       Hash_computed : Unsigned_128 :=0;
-      Hash_computed_HexString : String_Hex128 := [others => '0'];
+      Hash_computed_HexString : String_Hex128 := (others => '0');
    begin
       Hash_computed := Hash_128_32 (Key, Length, Seed);
       Hex128_IO.Put (To   => Hash_computed_HexString,
@@ -199,9 +216,9 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
                        New_Item => Hash_computed_HexString (4..String_Hex128'Last-1));
    end Hash_128_32;
 
-   -- ------------------- --
-   -- Hash_128_64 --
-   -- ------------------- --
+   -- ------------------------------------------------ --
+   -- Hash_128 with 64-bits words returns Unsigned_128 --
+   -- ------------------------------------------------ --
    function Hash_128_64 (
                Key    : Object;
                Length : Natural := Object'Size / 8;
@@ -214,7 +231,7 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
                Seed : Unsigned_32 := 0)
                return String is
       Hash_computed : Unsigned_128 :=0;
-      Hash_computed_HexString : String_Hex128 := [others => '0'];
+      Hash_computed_HexString : String_Hex128 := (others => '0');
    begin
       Hash_computed := Hash_128_64 (Key, Length, Seed);
       Hex128_IO.Put (To   => Hash_computed_HexString,
@@ -225,9 +242,9 @@ package body AdaForge.Crypto.MuRMuR_Hash3  is
                        New_Item => Hash_computed_HexString (4..String_Hex128'Last-1));
    end Hash_128_64;
 
-   -------------------------------------------------------------------------------
-   -- 128 bits hash --
-   -------------------------------------------------------------------------------
+   -- ----------------------------------------- --
+   -- Hash_128 32/64 words returns Unsigned_128 --
+   -- ----------------------------------------- --
    function Hash_128 (
                Key : Object;
                Length : Natural := Object'Size / 8;

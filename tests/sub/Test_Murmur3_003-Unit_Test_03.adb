@@ -1,5 +1,8 @@
-
-
+-------------------------------------------------------------------------------
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (Test_Murmur3_003)
 procedure Unit_Test_03 (T : in out AUnit.Test_Cases.Test_Case'Class) is
    pragma Unreferenced (T);
@@ -12,7 +15,7 @@ begin
    --             result : out Unsigned_32);
 
    -- -- renames
-   -- procedure Hash32  (
+   -- procedure Hash32 (
    --             Key: Object;
    --             seed   : Unsigned_32 := 0;
    --             result : out Unsigned_32)
@@ -42,14 +45,14 @@ end Unit_Test_03;
 --   {
 --     if(rep % 10 == 0) printf(".");
 
---     Unsigned char key[256];
+--     Unsigned char key(256);
 
 --     memset(key,0,sizeof(key));
 
 --     r.rand_p(key,32);
 
---     uint32_t h1[16];
---     uint32_t h2[16];
+--     uint32_t h1(16);
+--     uint32_t h2(16);
 
 --     memset(h1,0,hashbytes);
 --     memset(h2,0,hashbytes);

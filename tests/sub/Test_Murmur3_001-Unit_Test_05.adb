@@ -1,3 +1,9 @@
+-------------------------------------------------------------------------------
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
+
 with Ada.Integer_Text_IO;
 
 separate (Test_Murmur3_001)
@@ -11,7 +17,7 @@ procedure Unit_Test_04 (T : in out AUnit.Test_Cases.Test_Case'Class) is
    type key_array is array (key_index) of Unsigned_8;
    type hash_array is array (key_index) of Unsigned_32;
 
-   key : key_array := [others => 0];
+   key : key_array := (others => 0);
    Hashes :  hash_array;
    Final :  Unsigned_32;
    verification : Unsigned_32;
@@ -19,19 +25,24 @@ procedure Unit_Test_04 (T : in out AUnit.Test_Cases.Test_Case'Class) is
    Hash_expected : constant Unsigned_32 := 16#B0F57EE3#;
    Hash_computed : Unsigned_32;
 
-   package MuRMuR is new AdaForge.Crypto.MuRMuR_Hash3  (Object => key_array);
+   package MuRMuR is new AdaForge.Crypto.MuRMuR_Hash3 (Object => key_array);
 
-   package Final_MuRMuR is new AdaForge.Crypto.MuRMuR_Hash3  (Object => hash_array);
+   package Final_MuRMuR is new AdaForge.Crypto.MuRMuR_Hash3 (Object => hash_array);
 
    package Hex_String_8  is new Ada.Text_IO.Modular_IO (Unsigned_8);
    package Hex_String_32 is new Ada.Text_IO.Modular_IO (Unsigned_32);
    subtype String_32Hex is String(1..32/4 +4);
-   Hash_computed_HexString : String_32Hex := [others => 'x'];
+   Hash_computed_HexString : String_32Hex := (others => 'x');
    Byte_Hex : String(1..2+4);
 
 --   function Convert is new Ada.Unchecked_Conversion (Source => key_array, Target => key_Hex );
 
 begin
+
+         -- Hex_String_128.Put (To   => Hash_computed_HexString,
+         --                Item => Hashes (i),
+         --                Base  => 16);
+         -- Ada.Text_IO.put_Line ("i =" & i'Image & " = " & Hash_computed_HexString);
 
 
    for i in key'Range loop
@@ -52,7 +63,7 @@ begin
    -- Ada.Text_IO.Put_Line ("key_index'Last =" & key_index'Last'Image);
 
    for i in key'Range loop
-      -- Ada.Text_IO.Put("[");
+      -- Ada.Text_IO.Put("(");
       -- for j in 0..i loop
          -- Ada.Integer_Text_IO.Put(
          --       Item => j,
@@ -60,7 +71,7 @@ begin
          --       Base =>16);
          -- Ada.Text_IO.Put( Byte_Hex(4..5));
       -- end loop;
-      -- Ada.Text_IO.Put ("] =");
+      -- Ada.Text_IO.Put (") =");
       MuRMuR.Hash_x86_32 (Key => Key,
                           Length => i,
                           Seed  => Unsigned_32 (key_index'Range_Length-i),
@@ -98,9 +109,9 @@ end Unit_Test_04;
 -- {
 --   const int hashbytes = hashbits / 8;
 
---   uint8_t * key    = new uint8_t[256];
---   uint8_t * hashes = new uint8_t[hashbytes * 256];
---   uint8_t * final  = new uint8_t[hashbytes];
+--   uint8_t * key    = new uint8_t(256);
+--   uint8_t * hashes = new uint8_t(hashbytes * 256);
+--   uint8_t * final  = new uint8_t(hashbytes);
 
 --   memset(key,0,256);
 --   memset(hashes,0,hashbytes*256);
@@ -111,9 +122,9 @@ end Unit_Test_04;
 
 --   for(int i = 0; i < 256; i++)
 --   {
---     key[i] = (uint8_t)i;
+--     key(i) = (uint8_t)i;
 
---     hash(key,i,256-i,&hashes[i*hashbytes]);
+--     hash(key,i,256-i,&hashes(i*hashbytes));
 --   }
 
 --   // Then hash the result array
@@ -123,11 +134,11 @@ end Unit_Test_04;
 --   // The first four bytes of that hash, interpreted as a little-endian integer, is our
 --   // verification value
 
---   uint32_t verification = (final[0] << 0) | (final[1] << 8) | (final[2] << 16) | (final[3] << 24);
+--   uint32_t verification = (final(0) << 0) | (final(1) << 8) | (final(2) << 16) | (final(3) << 24);
 
---   delete [] key;
---   delete [] hashes;
---   delete [] final;
+--   delete () key;
+--   delete () hashes;
+--   delete () final;
 
 --   //----------
 

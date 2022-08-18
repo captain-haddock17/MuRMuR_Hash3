@@ -1,12 +1,18 @@
 -------------------------------------------------------------------------------
--- AdaForge.Crypto.MuRMuR_Hash3  was written by Austin Appleby, and is placed in the public
--- domain. The author hereby disclaims copyright to this source code.
+--  MuRMuR_Hash (v3) was written by Austin Appleby,
+--  and is placed in the public domain.
+--  The author disclaims copyright in his C source code.
 -------------------------------------------------------------------------------
-
+--  William J. Franck has ported the C code to Ada with adaptations.
+--
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (AdaForge.Crypto.MuRMuR_Hash3)
-   -- ------------------- --
+   -- ----------- --
    -- Hash_128_64 --
-   -- ------------------- --
+   -- ----------- --
    function Hash_128_64 (
                Key    : Object;
                Length : Natural := Object'Size / 8;
@@ -19,10 +25,9 @@ separate (AdaForge.Crypto.MuRMuR_Hash3)
       Tail_Length : constant Integer := Length mod Hash_Length;
 
    -- for COMPUTE
-      h1, h2 : Unsigned_64 := Unsigned_64 (Seed);
-      k1, k2 : Unsigned_64 := 0;
-      c1     : constant Unsigned_64 := 16#87c3_7b91_1142_53d5#;
-      c2     : constant Unsigned_64 := 16#4cf5_ad43_2745_937f#;
+      h : Unsigned_64_128 := (others => Unsigned_64 (Seed));
+      k : Unsigned_64_128 := (others => 0);
+      c : constant Unsigned_64_128 := (16#87c3_7b91_1142_53d5#, 16#4cf5_ad43_2745_937f#);
 
    begin
 
@@ -35,26 +40,26 @@ separate (AdaForge.Crypto.MuRMuR_Hash3)
          begin
             COMPUTE:
             for i in 1 .. Nblocks loop
-               k1 := Adapt_Indianess_64 (Head_Data (i)(1));
-               k2 := Adapt_Indianess_64 (Head_Data (i)(2));
+               k (1) := Adapt_Indianess_64 (Head_Data (i)(1));
+               k (2) := Adapt_Indianess_64 (Head_Data (i)(2));
 
-               k1 := @ * c1;
-               k1 := Rotate_Left (k1, 31);
-               k1 := @ * c2;
-               h1 := h1 xor k1;
+               k (1) := @ * c (1);
+               k (1) := Rotate_Left (k (1), 31);
+               k (1) := @ * c (2);
+               h (1) := h (1) xor k (1);
 
-               h1 := Rotate_Left (h1, 27);
-               h1 := @ + h2;
-               h1 := h1 * 5 + 16#52dc_e729#;
+               h (1) := Rotate_Left (h (1), 27);
+               h (1) := @ + h (2);
+               h (1) := h (1) * 5 + 16#52dc_e729#;
 
-               k2 := @ * c2;
-               k2 := Rotate_Left (k2, 33);
-               k2 := @ * c1;
-               h2 := h2 xor k2;
+               k (2) := @ * c (2);
+               k (2) := Rotate_Left (k (2), 33);
+               k (2) := @ * c (1);
+               h (2) := h (2) xor k (2);
 
-               h2 := Rotate_Left (h2, 31);
-               h2 := @ + h1;
-               h2 := h2 * 5 + 16#3849_5ab5#;
+               h (2) := Rotate_Left (h (2), 31);
+               h (2) := @ + h (1);
+               h (2) := h (2) * 5 + 16#3849_5ab5#;
             end loop COMPUTE;
          end MAP_Head;
       end if;
@@ -62,99 +67,50 @@ separate (AdaForge.Crypto.MuRMuR_Hash3)
       if Tail_Length > 0 then
          TAIL:
          declare
---         Tail     : constant array (1 .. 16) of Unsigned_8 := [ others => 0]; -- FIXME Data (Nblocks .. Nblocks + Tail_Length));
-            k1, k2   : Unsigned_64 := 0;
+            j : integer;
          begin
-         -- for i in reverse 9 .. Tail_Length loop
-         --    k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 15), 8*(i-1)-64));
-         -- end loop;
-         -- k2 := @ * c2;
-         -- k2 := Rotate_Left (k2, 33);
-         -- k2 := @ * c1;
-         -- h2 := h2 xor k2;
+            k := (others => 0);
+            for i in reverse 1 .. Tail_Length loop
+               j := (i -1) / 8;
+                  k (j+1) := k (j+1) xor Shift_Left (
+                        Unsigned_64 (Data (Nblocks * Hash_Length + i)),
+                        8*(i-1)-64*(j));
+               case i is
+                  when 9 =>
+                     k (2) := @ * c (2);
+                     k (2) := Rotate_Left (k (2), 33);
+                     k (2) := @ * c (1);
+                     h (2) := h (2) xor k (2);
+                  when 1 =>
+                     k (1) := @ * c (1);
+                     k (1) := Rotate_Left (k (1), 31);
+                     k (1) := @ * c (2);
+                     h (1) := h (1) xor k (1);
+                  when others =>
+                     null;
+               end case;
+            end loop;
 
-            if Tail_Length >= 15 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 15)), 8*(15-1)-64);
-            end if;
-            if Tail_Length >= 14 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 14)), 8*(14-1)-64);
-            end if;
-            if Tail_Length >= 13 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 13)), 8*(13-1)-64);
-            end if;
-            if Tail_Length >= 12 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 12)), 8*(12-1)-64);
-            end if;
-            if Tail_Length >= 11 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 11)), 8*(11-1)-64);
-            end if;
-            if Tail_Length >= 10 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 10)), 8*(10-1)-64);
-            end if;
-            if Tail_Length >= 9 then
-               k2 := k2 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 9)), 8*(9-1)-64);
-               k2 := @ * c2;
-               k2 := Rotate_Left (k2, 33);
-               k2 := @ * c1;
-               h2 := h2 xor k2;
-            end if;
-
-         -- for i in reverse 1 .. Tail_Length loop
-         --    k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 3)), 8*(8-1));
-         -- end loop;
-         -- k1 := @ * c1;
-         -- k1 := Rotate_Left (k1, 31);
-         -- k1 := @ * c2;
-         -- h1 := h1 xor k1;
-
-            if Tail_Length >= 8 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 8)), 8*(8-1));
-            end if;
-            if Tail_Length >= 7 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 7)), 8*(7-1));
-            end if;
-            if Tail_Length >= 6 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 6)), 8*(6-1));
-            end if;
-            if Tail_Length >= 5 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 5)), 8*(5-1));
-            end if;
-            if Tail_Length >= 4 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 4)), 8*(4-1));
-            end if;
-            if Tail_Length >= 3 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 3)), 8*(3-1));
-            end if;
-            if Tail_Length >= 2 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 2)), 8*(2-1));
-            end if;
-            if Tail_Length >= 1 then
-               k1 := k1 xor Shift_Left (Unsigned_64 (Data (Nblocks * Hash_Length + 1)), 8*(1-1));
-               k1 := @ * c1;
-               k1 := Rotate_Left (k1, 31);
-               k1 := @ * c2;
-               h1 := h1 xor k1;
-            end if;
          end TAIL;
       end if;
 
       FINALIZE:
       declare
       begin
-         h1 := h1 xor Unsigned_64 (Length);
-         h2 := h2 xor Unsigned_64 (Length);
+         h (1) := h (1) xor Unsigned_64 (Length);
+         h (2) := h (2) xor Unsigned_64 (Length);
 
-         h1 := @ + h2;
-         h2 := @ + h1;
+         h (1) := @ + h (2);
+         h (2) := @ + h (1);
 
-         h1 := fmix64 (h1);
-         h2 := fmix64 (h2);
+         h (1) := fmix64 (h (1));
+         h (2) := fmix64 (h (2));
 
-         h1 := @ + h2;
-         h2 := @ + h1;
+         h (1) := @ + h (2);
+         h (2) := @ + h (1);
       end FINALIZE;
 
-      return Shift_Left(Unsigned_128 (h2), 64)
-                or Unsigned_128 (h1);
+      return Shift_Left(Unsigned_128 (h (2)), 64)
+                or Unsigned_128 (h (1));
 
    end Hash_128_64;

@@ -3,15 +3,15 @@ version = "3.0.0-dev"
 
 description = "Hash functions based on Austin Appleby's MuRMuR v3 algorithm."
 long-description = "Non-cryptographic 32-bit or 128-bit hash functions based on Austin Appleby [2008] multiply (MU) and rotate (R) v3 algorithm."
-tags = ["spark", "security"]
+tags = ["crypto", "hash", "digest"]
 
 authors = ["William J. Franck"]
 maintainers = ["William J. Franck <william@sterna.io>"]
 maintainers-logins = ["captain-haddock17"]
 
-licenses = "MIT"
+licenses = "APACHE-2.0"
 
-website = "https://myproject.example.org/"
+website = "https://github.com/captain-haddock17/MuRMuR_Hash3"
 
 [gpr-externals]
 BUILD_MODE = ["debug", "profile", "release"]
@@ -41,7 +41,7 @@ BUILD_MODE = ["debug", "profile", "release"]
 
 
 # Optimization
-# project-files = ["test/testsuite.gpr"]
+# project-files = ["tests/testsuite.gpr"]
 
 [[depends-on]]
 aunit = "^22.0.0"

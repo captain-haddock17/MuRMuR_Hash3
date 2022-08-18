@@ -1,14 +1,18 @@
 -------------------------------------------------------------------------------
--- AdaForge.Crypto.MuRMuR_Hash3  was written by Austin Appleby, and is placed in the public
--- domain. The author hereby disclaims copyright to this source code.
+--  MuRMuR_Hash (v3) was written by Austin Appleby,
+--  and is placed in the public domain.
+--  The author disclaims copyright in his C source code.
 -------------------------------------------------------------------------------
-
--- with Ada.Text_IO;
--- with Ada.Integer_Text_IO;
+--  William J. Franck has ported the C code to Ada with adaptations.
+--
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (AdaForge.Crypto.MuRMuR_Hash3)
-   -------------------------------------------------------------------------------
-   -- 32 bits hash --
-   -------------------------------------------------------------------------------
+   ---------- --
+   -- Hash_32 --
+   ---------- --
    function Hash_32 (
                Key : Object;
                Length : Natural := Object'Size / 8;
@@ -53,19 +57,17 @@ separate (AdaForge.Crypto.MuRMuR_Hash3)
       if Tail_Length > 0 then
          TAIL:
          declare
-            -- type Tail_Array is array (1 .. Tail_Length) of Unsigned_8;
-            -- function Map_to_Array is new Ada.Unchecked_Conversion (
-            --       Source => Data_8b,
-            --       Target => Tail_Array);
---            Tail : Tail_array := Map_to_Array (Data (nblocks*4+1 .. nblocks*4 + Tail_Length));
             k1 : Unsigned_32 := 0;
-
          begin
             if Tail_Length >= 3 then
-               k1 := k1 xor Shift_Left (Unsigned_32 (Data (nblocks*Hash_Length + 3)), 16);
+               k1 := k1 xor Shift_Left (
+                     Unsigned_32 (Data (nblocks*Hash_Length + 3)),
+                     16);
             end if;
             if Tail_Length >= 2 then
-               k1 := k1 xor Shift_Left (Unsigned_32 (Data (nblocks*Hash_Length + 2)), 8);
+               k1 := k1 xor Shift_Left (
+                     Unsigned_32 (Data (nblocks*Hash_Length + 2)),
+                     8);
             end if;
             if Tail_Length >= 1 then
                k1 := k1 xor Unsigned_32 (Data (nblocks*Hash_Length + 1));

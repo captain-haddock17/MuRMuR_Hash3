@@ -1,20 +1,39 @@
 -------------------------------------------------------------------------------
--- AdaForge.Crypto.MuRMuR_Hash3  was written by Austin Appleby, and is placed in the public
--- domain. The author hereby disclaims copyright to this source code.
+--  MuRMuR_Hash (v3) was written by Austin Appleby,
+--  and is placed in the public domain.
+--  The author disclaims copyright in his C source code.
 -------------------------------------------------------------------------------
-
-with Ada.Text_IO;
+--  William J. Franck has ported the C code to Ada with adaptations.
+--  https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.h
+--
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 
 with System;
 with Interfaces;
-use  Interfaces;
 
 generic
    type Object is private;
-package AdaForge.Crypto.MuRMuR_Hash3  is
+   -- /!\ Instantiation will rise warnings about unchecked conversions having different sizes.
+   -- This is intentional as we cast 'Object' data to a formated 32- 64-bits array 
+   -- use '-gnatwZ' to suppress warnings on those unchecked conversions 
+   -- as the types are known at compile time and may have different smaller sizes (thus safe). 
 
-   package Hex32_IO is new Ada.Text_IO.Modular_IO (Unsigned_32);
-   package Hex128_IO is new Ada.Text_IO.Modular_IO (Unsigned_128);
+package AdaForge.Crypto.MuRMuR_Hash3  is
+   -------------------------------------------------------------------------------
+   -- Note - The x86 and x64 versions do _not_ produce the same results, as the
+   -- algorithms are optimized for their respective platforms. You can still
+   -- compile and run any of them on any platform, but your performance with the
+   -- non-native version will be less than optimal.
+   --
+   -------------------------------------------------------------------------------
+   --  https://github.com/daisuke-t-jp/MurmurHash-Swift
+   --  https://github.com/daisuke-t-jp/MurmurHash-Swift/blob/master/Sources/MurmurHash/AdaForge.Crypto.MuRMuR_Hash3 _x86_32.swift
+   --  https://github.com/daisuke-t-jp/MurmurHash-Swift/blob/master/Sources/MurmurHash/AdaForge.Crypto.MuRMuR_Hash3 Tail.swift
+   -------------------------------------------------------------------------------
+
    -- ------------ --
    -- 32 bits hash --
    -- ------------ --
@@ -22,15 +41,15 @@ package AdaForge.Crypto.MuRMuR_Hash3  is
    function Hash_32 (
                Key: Object;
                Length : Natural := Object'Size / 8;
-               Seed   : Unsigned_32 := 0)
-               return Unsigned_32
+               Seed   : Interfaces.Unsigned_32 := 0)
+               return Interfaces.Unsigned_32
                with Pre => Length <= Object'Size / 8;
 
    -- return String
    function Hash_32 (
                Key: Object;
                Length : Natural := Object'Size / 8;
-               Seed   : Unsigned_32 := 0)
+               Seed   : Interfaces.Unsigned_32 := 0)
                return String
                with Pre => Length <= Object'Size / 8;
 
@@ -41,16 +60,16 @@ package AdaForge.Crypto.MuRMuR_Hash3  is
    function Hash_128 (
                Key: Object;
                Length : Natural := Object'Size / 8;
-               Seed   : Unsigned_32 := 0;
+               Seed   : Interfaces.Unsigned_32 := 0;
                Word_Size : Integer := System.Word_Size)
-               return Unsigned_128
+               return Interfaces.Unsigned_128
                with Pre => Length <= Object'Size / 8;
 
    -- return String
    function Hash_128 (
                Key: Object;
                Length : Natural := Object'Size / 8;
-               Seed   : Unsigned_32 := 0;
+               Seed   : Interfaces.Unsigned_32 := 0;
                Word_Size : Integer := System.Word_Size)
                return String
                with Pre => Length <= Object'Size / 8;

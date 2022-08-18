@@ -1,3 +1,9 @@
+-------------------------------------------------------------------------------
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
+
 with AdaForge.Crypto.MuRMuR_Hash3 ;
 
 with Interfaces;
@@ -40,13 +46,13 @@ package body Test_Murmur3_001 is
       --  Repeat for each test routine.
       Register_Routine (T,
                         Unit_Test_01'Access,
-                        "#01: whether a hash_32  is correctly implemented on a given platform");
+                        "#01: whether a hash_32  is correctly implemented on a given  platform");
       Register_Routine (T,
                         Unit_Test_02'Access,
-                        "#02: whether a hash_128 is correctly implemented on a 32bit platform");
+                        "#02: whether a hash_128 is correctly implemented on a 32-bit platform");
       Register_Routine (T,
                         Unit_Test_03'Access,
-                        "#03: whether a hash_128 is correctly implemented on a 64bit platform");
+                        "#03: whether a hash_128 is correctly implemented on a 64-bit platform");
    end Register_Tests;
 
 end Test_Murmur3_001;

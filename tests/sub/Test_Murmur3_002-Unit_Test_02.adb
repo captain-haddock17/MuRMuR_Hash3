@@ -1,5 +1,8 @@
-
-
+-------------------------------------------------------------------------------
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (Test_Murmur3_002)
 procedure Unit_Test_02 (T : in out AUnit.Test_Cases.Test_Case'Class) is
    pragma Unreferenced (T);
@@ -12,7 +15,7 @@ begin
    --             result : out Unsigned_32);
 
    -- -- renames
-   -- procedure Hash32  (
+   -- procedure Hash32 (
    --             Key: Object;
    --             seed   : Unsigned_32 := 0;
    --             result : out Unsigned_32)
@@ -44,11 +47,11 @@ end Unit_Test_02;
 --   const int pad = 16;
 --   const int buflen = keymax + pad*3;
 
---   uint8_t * buffer1 = new uint8_t[buflen];
---   uint8_t * buffer2 = new uint8_t[buflen];
+--   uint8_t * buffer1 = new uint8_t(buflen);
+--   uint8_t * buffer2 = new uint8_t(buflen);
 
---   uint8_t * hash1 = new uint8_t[hashbytes];
---   uint8_t * hash2 = new uint8_t[hashbytes];
+--   uint8_t * hash1 = new uint8_t(hashbytes);
+--   uint8_t * hash2 = new uint8_t(hashbytes);
 
 --   //----------
 
@@ -60,8 +63,8 @@ end Unit_Test_02;
 --     {
 --       for(int offset = pad; offset < pad*2; offset++)
 --       {
---         uint8_t * key1 = &buffer1[pad];
---         uint8_t * key2 = &buffer2[pad+offset];
+--         uint8_t * key1 = &buffer1(pad);
+--         uint8_t * key2 = &buffer2(pad+offset);
 
 --         r.rand_p(buffer1,buflen);
 --         r.rand_p(buffer2,buflen);
@@ -105,11 +108,11 @@ end Unit_Test_02;
 --     printf("PASS\n");
 --   }
 
---   delete [] buffer1;
---   delete [] buffer2;
+--   delete () buffer1;
+--   delete () buffer2;
 
---   delete [] hash1;
---   delete [] hash2;
+--   delete () hash1;
+--   delete () hash2;
 
 --   return result;
 -- }

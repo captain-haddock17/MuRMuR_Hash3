@@ -1,5 +1,8 @@
-
-
+-------------------------------------------------------------------------------
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (Test_Murmur3_004)
 procedure Unit_Test_04 (T : in out AUnit.Test_Cases.Test_Case'Class) is
    pragma Unreferenced (T);
@@ -12,7 +15,7 @@ begin
    --             result : out Unsigned_32);
 
    -- -- renames
-   -- procedure Hash32  (
+   -- procedure Hash32 (
    --             Key: Object;
    --             seed   : Unsigned_32 := 0;
    --             result : out Unsigned_32)
@@ -50,7 +53,7 @@ end Unit_Test_04;
 --   //----------
 --   // Add all keys with one non-zero byte
 
---   uint8_t key[256];
+--   uint8_t key(256);
 
 --   memset(key,0,256);
 
@@ -59,12 +62,12 @@ end Unit_Test_04;
 --   {
 --     for(int valA = 1; valA <= 255; valA++)
 --     {
---       key[byteA] = (uint8_t)valA;
+--       key(byteA) = (uint8_t)valA;
 
 --       c(key,keylen);
 --     }
 
---     key[byteA] = 0;
+--     key(byteA) = 0;
 --   }
 
 --   //----------
@@ -76,18 +79,18 @@ end Unit_Test_04;
 --   {
 --     for(int valA = 1; valA <= 255; valA++)
 --     {
---       key[byteA] = (uint8_t)valA;
+--       key(byteA) = (uint8_t)valA;
 
 --       for(int valB = 1; valB <= 255; valB++)
 --       {
---         key[byteB] = (uint8_t)valB;
+--         key(byteB) = (uint8_t)valB;
 --         c(key,keylen);
 --       }
 
---       key[byteB] = 0;
+--       key(byteB) = 0;
 --     }
 
---     key[byteA] = 0;
+--     key(byteA) = 0;
 --   }
 -- }
 
@@ -110,10 +113,10 @@ end Unit_Test_04;
 
 --     for(int i = 0; i < (int)keys.size(); i++)
 --     {
---       ByteVec & key = keys[i];
+--       ByteVec & key = keys(i);
 
 --       printf("Key  - ");
---       printbytes(&key[0],(int)key.size());
+--       printbytes(&key(0),(int)key.size());
 --       printf("\n");
 --     }
 --     printf("\n");

@@ -1,12 +1,18 @@
 -------------------------------------------------------------------------------
--- AdaForge.Crypto.MuRMuR_Hash3  was written by Austin Appleby, and is placed in the public
--- domain. The author hereby disclaims copyright to this source code.
+--  MuRMuR_Hash (v3) was written by Austin Appleby,
+--  and is placed in the public domain.
+--  The author disclaims copyright in his C source code.
 -------------------------------------------------------------------------------
-
+--  William J. Franck has ported the C code to Ada with adaptations.
+--
+--  SPDX-License-Identifier: Apache-2.0
+--  SPDX-FileCopyrightText: Copyright 2022 William J. Franck (william.franck@adaforge.org)
+--  SPDX-Creator: William J. Franck (william.franck@adaforge.org)
+-------------------------------------------------------------------------------
 separate (AdaForge.Crypto.MuRMuR_Hash3)
-   -------------------------------------------------------------------------------
-   -- 32 bits hash --
-   -------------------------------------------------------------------------------
+   ---------------------- --
+   -- Hash_32_Progressive --
+   ---------------------- --
    function Hash_32_Progressive (
                Key : Object;
                Length : Natural := Object'Size / 8;
@@ -71,7 +77,7 @@ separate (AdaForge.Crypto.MuRMuR_Hash3)
                h1 : Unsigned_32 := h;
                k1 : Unsigned_32 := 0;
                Tail_Length        : constant Integer := Integer(Carry mod 4);
---             tail     : constant array (1 .. 4) of Unsigned_8 := [ others => 0]; --FIXME Data (nblocks .. nblocks + Tail_Length));
+--             tail     : constant array (1 .. 4) of Unsigned_8 := ( others => 0); --FIXME Data (nblocks .. nblocks + Tail_Length));
 
             begin
                if Tail_Length > 0 then
