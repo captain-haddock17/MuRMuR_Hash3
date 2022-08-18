@@ -6,23 +6,23 @@ procedure Unit_Test_03 (T : in out AUnit.Test_Cases.Test_Case'Class) is
 begin
 
 
-   -- procedure Hash_x86_32 ( 
-   --             Key: in Object; 
-   --             seed   : unsigned_32 := 0; 
-   --             result : out unsigned_32);
+   -- procedure Hash_x86_32 (
+   --             Key: Object;
+   --             seed   : Unsigned_32 := 0;
+   --             result : out Unsigned_32);
 
    -- -- renames
    -- procedure Hash32  (
-   --             Key: in Object; 
-   --             seed   : unsigned_32 := 0; 
-   --             result : out unsigned_32)
+   --             Key: Object;
+   --             seed   : Unsigned_32 := 0;
+   --             result : out Unsigned_32)
    --    renames Hash_x86_32;
 
-   -- -- almost same as Hash_x86_32 
-   -- function PHash_32 ( 
+   -- -- almost same as Hash_x86_32
+   -- function PHash_32 (
    --             Key : Object;
-   --             seed : unsigned_32 := 0)
-   --             return unsigned_32;
+   --             seed : Unsigned_32 := 0)
+   --             return Unsigned_32;
 
 
    --  Test for expected conditions. Multiple assertions
@@ -33,7 +33,7 @@ end Unit_Test_03;
 -- void AppendedZeroesTest ( pfHash hash, const int hashbits )
 -- {
 --   printf("Running sanity check 2");
-  
+
 --   Rand r(173994);
 
 --   const int hashbytes = hashbits/8;
@@ -42,7 +42,7 @@ end Unit_Test_03;
 --   {
 --     if(rep % 10 == 0) printf(".");
 
---     unsigned char key[256];
+--     Unsigned char key[256];
 
 --     memset(key,0,sizeof(key));
 

@@ -1,12 +1,15 @@
+with AdaForge.Crypto.MuRMuR_Hash3 ;
+with Interfaces;
+with Ada.Text_IO;
+
 with AUnit.Assertions; use AUnit.Assertions;
 
---  Template for test case body.
 package body Test_Murmur3_002 is
 
    --  Identifier of test case:
    overriding function Name (T : Test_Case) return Message_String is
    begin
-      return Format ("Test_Murmur3_002");
+      return Format ("Test_Murmur3_002 - Verification Tests");
    end Name;
 
    overriding procedure Set_Up (T : in out Test_Case) is
@@ -27,24 +30,29 @@ package body Test_Murmur3_002 is
    end Tear_Down;
 
 
-   -- ------------ --
-   -- Unit_Test_02 --
-   -- ------------ --
-   -- Basic sanity checks -
-   -- A hash function should not be reading outside the bounds of the key.
-   -- Flipping a bit of a key should, with overwhelmingly high probability,
-   -- result in a different hash.
-   -- Hashing the same key twice should always produce the same result.
-   -- The memory alignment of the key should not affect the hash result.
-   procedure Unit_Test_02 (T : in out AUnit.Test_Cases.Test_Case'Class) is separate;
+   -- ------------------ --
+   -- Verification Tests --
+   -- ------------------ --
+   -- This should hopefully be a thorough and uambiguous test of whether a hash
+   -- is correctly implemented on a given platform
+   procedure Verification32_Test (T : in out AUnit.Test_Cases.Test_Case'Class) is separate;
+   procedure Verification128_32_Test (T : in out AUnit.Test_Cases.Test_Case'Class) is separate;
+   procedure Verification128_64_Test (T : in out AUnit.Test_Cases.Test_Case'Class) is separate;
 
 
    --  Register test routines to call:
    overriding procedure Register_Tests (T : in out Test_Case) is
       use Test_Cases, Test_Cases.Registration;
    begin
-      --  Repeat for each test routine.
-      Register_Routine (T, Unit_Test_02'Access, "Basic sanity checks");
+      Register_Routine (T,
+                        Verification32_Test'Access,
+                        "Hash_32()  on a 256 array of hashed values with seeds");
+      Register_Routine (T,
+                        Verification128_32_Test'Access,
+                        "Hash_128() on a 256 array of hashed values with seeds on a 32bit platform");
+      Register_Routine (T,
+                        Verification128_64_Test'Access,
+                        "Hash_128() on a 256 array of hashed values with seeds on a 64bit platform");
    end Register_Tests;
 
 end Test_Murmur3_002;

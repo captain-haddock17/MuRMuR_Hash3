@@ -6,23 +6,23 @@ procedure Unit_Test_02 (T : in out AUnit.Test_Cases.Test_Case'Class) is
 begin
 
 
-   -- procedure Hash_x86_32 ( 
-   --             Key: in Object; 
-   --             seed   : unsigned_32 := 0; 
-   --             result : out unsigned_32);
+   -- procedure Hash_x86_32 (
+   --             Key: Object;
+   --             seed   : Unsigned_32 := 0;
+   --             result : out Unsigned_32);
 
    -- -- renames
    -- procedure Hash32  (
-   --             Key: in Object; 
-   --             seed   : unsigned_32 := 0; 
-   --             result : out unsigned_32)
+   --             Key: Object;
+   --             seed   : Unsigned_32 := 0;
+   --             result : out Unsigned_32)
    --    renames Hash_x86_32;
 
-   -- -- almost same as Hash_x86_32 
-   -- function PHash_32 ( 
+   -- -- almost same as Hash_x86_32
+   -- function PHash_32 (
    --             Key : Object;
-   --             seed : unsigned_32 := 0)
-   --             return unsigned_32;
+   --             seed : Unsigned_32 := 0)
+   --             return Unsigned_32;
 
 
    --  Test for expected conditions. Multiple assertions
@@ -33,7 +33,7 @@ end Unit_Test_02;
 -- bool SanityTest ( pfHash hash, const int hashbits )
 -- {
 --   printf("Running sanity check 1");
-  
+
 --   Rand r(883741);
 
 --   bool result = true;
@@ -43,7 +43,7 @@ end Unit_Test_02;
 --   const int keymax = 256;
 --   const int pad = 16;
 --   const int buflen = keymax + pad*3;
-  
+
 --   uint8_t * buffer1 = new uint8_t[buflen];
 --   uint8_t * buffer2 = new uint8_t[buflen];
 
@@ -51,7 +51,7 @@ end Unit_Test_02;
 --   uint8_t * hash2 = new uint8_t[hashbytes];
 
 --   //----------
-  
+
 --   for(int irep = 0; irep < reps; irep++)
 --   {
 --     if(irep % (reps/10) == 0) printf(".");
