@@ -1,6 +1,5 @@
-name = "adafhashmurm"
-version = "3.0.0-dev"
-
+name = "tests"
+version = "0.1.0-dev"
 description = "Hash functions based on Austin Appleby's MuRMuR v3 algorithm."
 long-description = "Non-cryptographic 32-bit or 128-bit hash functions based on Austin Appleby [2008] multiply (MU) and rotate (R) v3 algorithm."
 tags = ["crypto", "hash", "digest"]
@@ -16,20 +15,23 @@ website = "https://github.com/captain-haddock17/MuRMuR_Hash3"
 # [gpr-externals]
 # BUILD_MODE = ["debug", "profile", "release"]
 
-project-files = ["bld/adafhashmurm.gpr"]
+project-files = ["../bld/adafhashmurm-lib-test.gpr"]
 
 [[depends-on]]
-adafhash = "*"
+adafhashmurm = "*"
+adafdevttestunit = "*"
 
 [[pins]]
-adafhash = { path='../AdafHash' }
+adafhashmurm = { path='..' }
+adafdevttestunit = { path='../../AdafDevtTestUnit' }
 
 [build-profiles]
-adafhash = "release"
+adafhashmurm = "release"
+adafdevttestunit = "release"
 
 [configuration]
 auto_gpr_with = false
-output_dir = "bld"
+output_dir = "../bld"
 
 [build-switches]
 "*".Ada_Version = "Ada2022"

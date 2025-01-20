@@ -1,0 +1,38 @@
+with "adafhashmurm_config.gpr";
+
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+
+abstract project adafhashmurm is
+
+   --  Machine_Target :=  adafhashmurm_config.Alire_Host_Arch & "_" & adafhashmurm_config.Alire_Host_OS;
+   Machine_Target :=  external ("CPUTYPE", "x86_64") & "_" & external ("OSTYPE", "os"); -- adafhashmurm_config.Alire_Host_OS;
+   Build_Profile : adafhashmurm_config.Build_Profile_Kind := external ("PROFILE", adafhashmurm_config.Build_Profile);
+   Build_Root := "../build";
+   Build_Dir := Build_Root & "/" & Machine_Target & "/" & Build_Profile;
+
+   for Create_Missing_Dirs use "True";
+
+   package Compiler is
+      for Default_Switches ("Ada") use adafhashmurm_config.Ada_Compiler_Switches;
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   for Archive_Indexer use ("ranlib", "-no_warning_for_no_symbols", "-c");
+
+   package Install is
+      for Artifacts (".") use (Build_Root & "/share");
+   end Install;
+
+end AdafHashMurm;

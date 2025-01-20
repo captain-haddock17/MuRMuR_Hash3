@@ -1,0 +1,66 @@
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+
+with "adafhashmurm_config.gpr";
+with "adafhashmurm.gpr";
+with "../../AdafHash/bld/adafhash-lib.gpr";
+
+library project AdafHashMurm.Lib is
+
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+
+-- for Library_Interface use ("AdaForge.hash.Comm.App_L7.MyEvent_Sourcing");
+   for Library_Name use "adafhashmurm";
+   for Library_Version use Project'Library_Name
+      & ".so." & adafhashmurm_Config.Crate_Version;
+   Library_Type : Library_Type_Type :=
+     external ("ADAFHASHMURM_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+   for Library_Kind use Library_Type;
+-- for Interface use ("AdaForge.hash-comm-app7-myevent_sourcing.ads");
+
+   for Source_Dirs use ("../src/lib/**", ".");
+   for Object_Dir       use Build_Dir & "/obj-" & Library_Type;
+   for Library_Dir      use Build_Dir & "/lib-" & Library_Type;
+   for Library_Src_Dir  use Build_Dir & "/include";
+
+   package Compiler is
+      for Default_Switches ("Ada") use adafhashmurm_Config.Ada_Compiler_Switches;
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use (Build_Root & "/share");
+   end Install;
+
+   package Pretty_Printer is
+    -- --indentation=3 --max-line-length=132 --vertical-enum-types --vertical-array-types --indent-named-statements --no-compact --call-threshold=1 --par-threshold=1 --use-on-new-line --vertical-case-alternatives
+    for Default_switches ("Ada") 
+        use ( 
+           "--indentation=3"
+	        ,"--max-line-length=132"
+--	        ,"--pragma-upper-case"
+--	        ,"--enum-upper-case"
+	        ,"--vertical-enum-types"
+	        ,"--vertical-array-types"
+           ,"--indent-named-statements"
+           ,"--no-compact"
+           ,"--call-threshold=1"
+           ,"--par-threshold=1"
+	        ,"--use-on-new-line"
+           ,"--vertical-case-alternatives"
+            );
+    -- --indentation=3 --max-line-length=132 --vertical-enum-types --vertical-array-types --indent-named-statements --no-compact --call-threshold=1 --par-threshold=1 --use-on-new-line --vertical-case-alternatives
+    end Pretty_Printer;  
+
+end AdafHashMurm.Lib;

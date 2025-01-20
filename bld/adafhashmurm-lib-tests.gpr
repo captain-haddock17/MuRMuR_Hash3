@@ -1,0 +1,53 @@
+-- with "AdafHashMurm_Lib";
+-- with "AdafHashMurm_Config";
+-- with "alire/cache/dependencies/aunit_22.0.0_cbd7a80a/lib/gnat/aunit.gpr"
+
+project AdafHashMurm.Lib.Tests is
+
+   for Source_Dirs use ("../src/lib/**", ".");
+   for Object_Dir  use Build_Dir & "/obj-" & Library_Type;
+   for Library_Dir use Build_Dir & "/lib-" & Library_Type;
+   for Exec_Dir    use Build_Dir & "/bin";
+   for Main use (
+         "Tests.adb");
+   --   ,"TestPerf.adb"
+
+   for Create_Missing_Dirs use "True";
+
+   package Naming is
+        for Casing use "mixedcase";
+   end Naming;
+
+   package Compiler is
+      for Default_Switches ("Ada") use AdafHashMurm_Config.Ada_Compiler_Switches;
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+   package Pretty_Printer is
+    -- --indentation=3 --max-line-length=132 --vertical-enum-types --vertical-array-types --indent-named-statements --no-compact --call-threshold=1 --par-threshold=1 --use-on-new-line --vertical-case-alternatives
+    for Default_switches ("Ada") 
+        use ( 
+           "--indentation=3"
+	        ,"--max-line-length=132"
+--	        ,"--pragma-upper-case"
+--	        ,"--enum-upper-case"
+	        ,"--vertical-enum-types"
+	        ,"--vertical-array-types"
+           ,"--indent-named-statements"
+           ,"--no-compact"
+           ,"--call-threshold=1"
+           ,"--par-threshold=1"
+	        ,"--use-on-new-line"
+           ,"--vertical-case-alternatives"
+            );
+    -- --indentation=3 --max-line-length=132 --vertical-enum-types --vertical-array-types --indent-named-statements --no-compact --call-threshold=1 --par-threshold=1 --use-on-new-line --vertical-case-alternatives
+    end Pretty_Printer;  
+
+end AdafHashMurm.Lib.Tests;

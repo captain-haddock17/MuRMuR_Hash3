@@ -1,0 +1,41 @@
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+--  --------------------------------------------------------------------------------------
+--  SPDX-Creator: William J. Franck (william.franck@sterna.io)
+--  --------------------------------------------------------------------------------------
+--  Initial creation date : 2023-01-17
+--  --------------------------------------------------------------------------------------
+
+aggregate project adafhashmurm is
+
+-- Dependencies
+   for Project_Path use ("bld");
+
+-- Parts to be built
+   for Project_Files use ("bld/adafhashmurm-lib.gpr");
+
+   Host_OS := external ("OS", "default");
+   --  On Windows an OS environment variable is defined, we can use it to
+   --  determine if we are compiling on Windows.
+   --
+   --  On macOS, the nearest equivalent is OSTYPE; however this is
+   --  e.g. "darwin18", so not useful here. Set "macOS" by hand.
+
+   --  ALIRE_OS is used in alire_common.gpr.
+   --  GNATCOLL_OS is used in gnatcoll.gpr.
+   case Host_OS is
+      when "Windows_NT" | "windows_nt" | "windows" | "Windows" =>
+         for External ("ALIRE_OS") use "windows";
+         for External ("GNATCOLL_OS") use "windows";
+      when "macOS" | "macos" | "OSX" | "osx" =>
+         for External ("ALIRE_OS") use "macos";
+         for External ("GNATCOLL_OS") use "osx";
+      when others =>
+         for External ("ALIRE_OS") use "unix";
+         for External ("GNATCOLL_OS") use "unix";
+   end case;
+
+end adafhashmurm;
